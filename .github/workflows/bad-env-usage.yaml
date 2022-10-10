@@ -1,4 +1,4 @@
-name: Main workflow file
+name: (Bad example) env usage with workflow_call
 
 on:
   push:
@@ -10,10 +10,10 @@ env:
   AWS_REGION: us-west-3
 
 jobs:
-  randomstuff:
+  bad-path:
     runs-on: ubuntu-latest
     steps:
-      - name: Step 1 of main workflow.
+      - name: Try print env
         run: |
           echo ENV: $AWS_ENV
           echo REGION: $AWS_REGION
@@ -25,7 +25,6 @@ jobs:
       state: start
       message: |-
         *ENV*: $AWS_ENV
-        *REGION*: $AWS_REGION
 
   start-template-b:
     name: Starting Template B Job
@@ -40,7 +39,6 @@ jobs:
     name: Starting Template A Job
     uses: ./.github/workflows/template-a.yaml
     with:
-      state: start
+      state: end
       message: |
-        *ENV*: $AWS_ENV
         *REGION*: $AWS_REGION

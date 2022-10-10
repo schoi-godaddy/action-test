@@ -1,0 +1,44 @@
+name: (Good example) env usage with workflow_call
+
+on:
+  push:
+    branches:
+      - "main"
+
+env:
+  AWS_ENV: dev-private
+  AWS_REGION: us-west-3
+
+jobs:
+  good-path:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Try print env
+        run: |
+          echo ENV: $AWS_ENV
+          echo REGION: $AWS_REGION
+
+  start-template-a:
+    name: Starting Template A Job
+    uses: ./.github/workflows/template-a.yaml
+    with:
+      state: start
+      message: |-
+        *ENV*: ${{ env.AWS_ENV }}
+
+  start-template-b:
+    name: Starting Template B Job
+    uses: ./.github/workflows/template-b.yaml
+    with:
+      aws_env: ${{ env.AWS_ENV }}
+      aws_region: ${{ env.AWS_REGION }}
+    secrets:
+      TEXT: ${{ secrets.TEXT }}
+
+  start-template-a-2:
+    name: Starting Template A Job
+    uses: ./.github/workflows/template-a.yaml
+    with:
+      state: end
+      message: |
+        *REGION*: ${{ env.AWS_REGION }}
