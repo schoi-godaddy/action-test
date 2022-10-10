@@ -1,0 +1,46 @@
+name: Main workflow file
+
+on:
+  push:
+    branches:
+      - "main"
+
+env:
+  AWS_ENV: dev-private
+  AWS_REGION: us-west-3
+
+jobs:
+  randomstuff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 1 of main workflow.
+        run: |
+          echo ENV: $AWS_ENV
+          echo REGION: $AWS_REGION
+
+  start-template-a:
+    name: Starting Template A Job
+    uses: ./.github/workflows/template-a.yaml
+    with:
+      state: start
+      message: |-
+        *ENV*: $AWS_ENV
+        *REGION*: $AWS_REGION
+
+  start-template-b:
+    name: Starting Template B Job
+    uses: ./.github/workflows/template-b.yaml
+    with:
+      aws_env: $AWS_ENV
+      aws_region: $AWS_REGION
+    secrets:
+      TEXT: ${{ secrets.TEXT }}
+
+  start-template-a-2:
+    name: Starting Template A Job
+    uses: ./.github/workflows/template-a.yaml
+    with:
+      state: start
+      message: |
+        *ENV*: $AWS_ENV
+        *REGION*: $AWS_REGION

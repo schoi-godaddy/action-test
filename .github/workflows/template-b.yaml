@@ -1,0 +1,29 @@
+name: Template B
+
+on:
+  workflow_call:
+    inputs:
+      aws_env:
+        required: true
+        type: string
+        description: "ex) prod or dev-private"
+      aws_region:
+        required: true
+        type: string
+        default: us-east-1
+        description: "ex) us-east-1"
+    secrets:
+      TEXT:
+        required: true
+
+jobs:
+  do-something:
+    environment: ${{ inputs.aws_env }}
+    name: Doing something...
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 1
+        run: |
+          echo aws_env - ${{ inputs.aws_env }}
+          echo aws_region - ${{ inputs.aws_region }}
+          echo text - ${{ secrets.TEXT }}
