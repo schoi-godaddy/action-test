@@ -6,39 +6,45 @@ on:
       - "main"
 
 env:
-  AWS_ENV: dev-private
-  AWS_REGION: us-west-3
+  AWS_ENV: prod
+  AWS_REGION: us-west-2
 
 jobs:
-  good-path:
+  get-env:
     runs-on: ubuntu-latest
+    outputs:
+      AWS_ENV: ${{ steps.set_env.outputs.AWS_ENV }}
+      AWS_REGION: ${{ steps.set_env.outputs.AWS_REGION }}
     steps:
-      - name: Try print env
+      - id: set_env
         run: |
-          echo ENV: $AWS_ENV
-          echo REGION: $AWS_REGION
+          echo "::set-output name=AWS_ENV::$AWS_ENV"
+          echo "::set-output name=AWS_REGION::$AWS_REGION"
 
   start-template-a:
+    needs: get-env
     name: Starting Template A Job
     uses: ./.github/workflows/template-a.yaml
     with:
       state: start
       message: |-
-        *ENV*: ${{ env.AWS_ENV }}
+        *ENV*: ${{ needs.get-env.outputs.AWS_ENV }}
 
   start-template-b:
+    needs: get-env
     name: Starting Template B Job
     uses: ./.github/workflows/template-b.yaml
     with:
-      aws_env: ${{ env.AWS_ENV }}
-      aws_region: ${{ env.AWS_REGION }}
+      aws_env: ${{ needs.get-env.outputs.AWS_ENV }}
+      aws_region: ${{ needs.get-env.outputs.AWS_REGION }}
     secrets:
       TEXT: ${{ secrets.TEXT }}
 
   start-template-a-2:
+    needs: [get-env, start-template-b]
     name: Starting Template A Job
     uses: ./.github/workflows/template-a.yaml
     with:
       state: end
       message: |
-        *REGION*: ${{ env.AWS_REGION }}
+        *REGION*: ${{ needs.get-env.outputs.AWS_REGION }}

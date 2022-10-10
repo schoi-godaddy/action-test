@@ -5,6 +5,11 @@ on:
     branches:
       - "main"
 
+# You can't reference this in any jobs with uses/id in key.
+# The env context syntax allows you to use the value of an environment variable
+# in your workflow file. You can use the env context in the value of any key in a step except for the id and uses keys. For more information on the step syntax, see "Workflow syntax for GitHub Actions."
+#
+# https://docs.github.com/en/actions/learn-github-actions/contexts#env-context
 env:
   AWS_ENV: dev-private
   AWS_REGION: us-west-3
